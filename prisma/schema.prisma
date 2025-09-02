@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  description    String?
+  price          Float
+  images         String   // JSON array stored as string
+  inStock        Boolean  @default(true)
+  stockQuantity  Int      @default(0)
+  featured       Boolean  @default(false)
+  category       Category @relation(fields: [categoryId], references: [id])
+  categoryId     String
+  vintage        Int?
+  region         String?
+  grapeVariety   String?
+  alcoholContent Float?
+  servingTemp    String?
+  tastingNotes   String?
+  foodPairing    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([featured])
+  @@index([slug])
+}
+
+model Store {
+  id           String   @id @default(cuid())
+  name         String
+  address      String
+  city         String
+  postalCode   String
+  phone        String
+  email        String
+  openingHours String   // JSON stored as string
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model DeliveryZone {
+  id          String   @id @default(cuid())
+  name        String
+  postalCodes String   // JSON array stored as string
+  deliveryFee Float
+  minOrder    Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
